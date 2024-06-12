@@ -24,7 +24,8 @@ from .views import *
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("student.urls")),
-    path("signup/", signup_page, name="signup")
+    path("signup/", signup_page, name="signup"),
+    path("signin/", signin_page, name="signin")
 ]
 
 if settings.DEBUG:

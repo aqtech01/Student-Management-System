@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 
@@ -22,3 +23,24 @@ def signup_page(request):
             return redirect("signup")
 
     return render(request, "auth/signup.html")
+
+
+def signin_page(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "Invalid email or password")
+            return redirect("signin")
+
+        user = authenticate(username=user.username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("home")
+        else:
+            messages.error(request, "Invaild username or password")
+            return redirect("signin")
+
+    return render(request, "auth/signin.html")
