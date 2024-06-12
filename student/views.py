@@ -1,23 +1,26 @@
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, render,redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 from .models import *
 from .forms import StudentForm
+
 
 # Create your views here.#
 
 def home(request):
     student = Student.objects.all()
     context = {
-        "student" : student,
-        "title":"Home"
+        "student": student,
+        "title": "Home"
     }
-    return render(request, "student/index.html",context)
+    return render(request, "student/index.html", context)
 
-def view_student(request,id):
+
+def view_student(request, id):
     student = Student.objects.get(pk=id)
     return HttpResponseRedirect(reverse("home"))
+
 
 def add(request):
     if request.method == "POST":
@@ -43,6 +46,8 @@ def add(request):
             "title": "Add Students"
         }
         return render(request, "student/add.html", context)
+
+
 def edit(request, id):
     try:
         student = Student.objects.get(pk=id)
@@ -60,26 +65,23 @@ def edit(request, id):
             # ... and so on for other fields
             student.save()
             return redirect("home")
-        except ValidationError as e: # type: ignore
+        except ValidationError as e:  # type: ignore
             # Handle form validation errors here
             context = {
-                        "error": "An error occurred. Please check your data.",
-                        "student": student,
-                        "errors": e.message_dict}  # Include specific error messages
+                "error": "An error occurred. Please check your data.",
+                "student": student,
+                "errors": e.message_dict}  # Include specific error messages
             return render(request, "student/edit.html", context)
     else:
         context = {"student": student}
         return render(request, "student/edit.html", context)
-    
 
-def delete(request,id):
+
+def delete(request, id):
     try:
         student = Student.objects.get(pk=id)
         student.delete(),
-        messages.success(request,"Student Deleted Successful")
+        messages.success(request, "Student Deleted Successful")
     except Student.DoesNotExist:
-        messages.success(request,"Student Doesn't Found")
+        messages.success(request, "Student Doesn't Found")
     return redirect("home")
-
-
-        
